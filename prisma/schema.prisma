@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+enum Role {
+  ADMIN
+  STOREKEEPER
+}
+
+model Company {
+  id                  String  @id @default(uuid())
+  logo                String?
+  businessName        String  @unique
+  legalRepresentative String?
+  address             String?
+  phone               String?
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([businessName])
+}
+
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  products  Product[]
+  movements Movement[]
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([name])
+}
+
+model Product {
+  id                String     @id @default(uuid())
+  name              String
+  category          Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId        String
+  movements         Movement[]
+  inventory         Inventory?
+  availableQuantity Int        @default(0)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@index([categoryId])
+  @@index([categoryId, name])
+}
+
+model Movement {
+  id          String       @id @default(uuid())
+  date        DateTime     @default(now())
+  quantity    Int
+  type        MovementType
+  unit        UnitType
+  description String?
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  String
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@index([productId])
+  @@index([productId, date])
+}
+
+model Inventory {
+  id          String   @id @default(uuid())
+  quantity    Int
+  type        UnitType
+  description String?
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @unique
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+enum UnitType {
+  KILOS
+  BAGS
+}
+
+enum MovementType {
+  INCOME
+  OUTPUT
+}
