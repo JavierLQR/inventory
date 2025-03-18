@@ -5,7 +5,7 @@ import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { CategorieModule } from './modules/categorie/categorie.module'
 import { PrismaModule } from 'nestjs-prisma'
-
+import configuration from './config/load-variables'
 @Module({
   imports: [
     PrismaModule.forRoot({
@@ -13,6 +13,7 @@ import { PrismaModule } from 'nestjs-prisma'
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [configuration],
       envFilePath:
         process.env.NODE_ENV === 'production'
           ? '.env'
