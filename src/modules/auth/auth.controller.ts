@@ -1,20 +1,32 @@
-import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Logger,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { CreateAuthDto } from './dto/create-auth.dto'
 import { Response } from 'express'
+import { AuthUserGuard } from './guards/auth.guard'
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger: Logger = new Logger(AuthController.name)
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('login')
   async login(
     @Body() data: CreateAuthDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const auth = await this.authService.signIn(data)
     const isProduction = process.env.NODE_ENV === 'production'
-    if (isProduction)
+    if (isProduction) {
+      this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
       // // PRO
       return res.cookie('auth', auth, {
         // si pones en true, una vez actualizada la pagina en el front
@@ -25,16 +37,17 @@ export class AuthController {
         secure: true, // Secure=true solo en producción (HTTPS)
         httpOnly: true,
       })
-
+    }
+    this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
     res.cookie('auth', auth, {
       sameSite: 'lax',
       secure: true,
       httpOnly: true,
     })
-
     res.send({ auth, statusCode: HttpStatus.OK })
   }
 
+  @UseGuards(AuthUserGuard)
   @Get('logout')
   logout(@Res({ passthrough: true }) res: Response) {
     try {
@@ -42,11 +55,9 @@ export class AuthController {
         sameSite: 'lax',
         secure: true,
         httpOnly: true,
-        // path: '/',
       })
 
       res.send({
-        auth: '',
         statusCode: HttpStatus.OK,
         success: true,
       })

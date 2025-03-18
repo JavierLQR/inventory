@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Request } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { User } from '../types/user.type'
+import { SECRETS } from 'src/common/constant/constant'
 export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
   constructor() {
     super({
@@ -10,8 +11,8 @@ export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
         AuthJwt.stractJwtRequest,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      secretOrKey: 'auth-dental-ochoa',
-      ignoreExpiration: false,
+      secretOrKey: SECRETS.JWT,
+      ignoreExpiration: true,
     })
   }
 
