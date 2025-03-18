@@ -5,10 +5,6 @@ export const InitialApp = async (app: INestApplication<any>) => {
   app.use(cookie())
   Logger.debug('Cookie Parser Initialized')
 
-  console.log({
-    data: process.env.TEST,
-  })
-
   app.useLogger(
     process.env.NODE_ENV === 'production'
       ? ['error', 'warn', 'log']
