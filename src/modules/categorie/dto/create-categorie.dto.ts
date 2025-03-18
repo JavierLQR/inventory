@@ -19,4 +19,12 @@ export class CreateCategorieDto {
   @IsString()
   @IsOptional()
   is_active: boolean
+
+  @IsOptional()
+  @IsString()
+  updatedAt?: string | Date
+
+  @IsOptional()
+  @IsString()
+  createdAt?: string | Date
 }

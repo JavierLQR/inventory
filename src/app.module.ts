@@ -5,6 +5,10 @@ import { UserModule } from './modules/user/user.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { CategorieModule } from './modules/categorie/categorie.module'
 import { PrismaModule } from 'nestjs-prisma'
+import { ProviderModule } from './modules/provider/provider.module'
+import { TypeProductModule } from './modules/type-product/type-product.module'
+import { TypePresentationModule } from './modules/type-presentation/type-presentation.module'
+import { TypeMovementModule } from './modules/type-movement/type-movement.module'
 import configuration from './config/load-variables'
 
 @Module({
@@ -24,6 +28,10 @@ import configuration from './config/load-variables'
     UserModule,
     AuthModule,
     CategorieModule,
+    ProviderModule,
+    TypeProductModule,
+    TypePresentationModule,
+    TypeMovementModule,
   ],
   controllers: [],
   providers: [],

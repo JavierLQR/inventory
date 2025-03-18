@@ -31,27 +31,32 @@ model Roles {
 }
 
 model Company {
-  id                  String   @id @default(uuid())
+  id                  String  @id @default(uuid())
+  ruc                 String
+  corporate_reason    String
   logo                String?
-  businessName        String   @unique
+  businessName        String  @unique
   legalRepresentative String?
   address             String?
   phone               String?
-  updatedAt           DateTime @updatedAt
-  createdAt           DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 
   @@index([businessName])
 }
 
 model Category {
-  id          String     @id @default(uuid())
-  name        String     @unique
+  id          String  @id @default(uuid())
+  name        String  @unique
   description String?
-  is_active   Boolean    @default(true)
-  updatedAt   DateTime   @updatedAt
-  createdAt   DateTime   @default(now())
-  movements   Movement[]
-  products    Product[]
+  is_active   Boolean @default(true)
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  movements Movement[]
+  products  Product[]
 
   @@index([name])
 }
@@ -68,6 +73,12 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
+  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id])
+  typeProductId String
+
+  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id])
+  typePresentationId String?
+
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
@@ -77,19 +88,32 @@ model Product {
 }
 
 model Movement {
-  id          String       @id @default(uuid())
-  date        DateTime     @default(now())
-  quantity    Int
-  type        MovementType
+  id   String   @id @default(uuid())
+  date DateTime @default(now())
+
+  entry   Int?
+  exit    Int?
+  balance Int
+
+  type           MovementType @relation(fields: [movementTypeId], references: [id], onDelete: Cascade)
+  movementTypeId String
+
   description String?
-  categoryId  String
-  productId   String
-  updatedAt   DateTime     @updatedAt
-  createdAt   DateTime     @default(now())
-  unitTypeId  String
-  category    Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
-  unit        UnitType     @relation(fields: [unitTypeId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  typeProductId String
+  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id], onDelete: Cascade)
+
+  TypePresentation   TypePresentation @relation(fields: [typePresentationId], references: [id], onDelete: Cascade)
+  typePresentationId String
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 
   @@index([date])
   @@index([productId])
@@ -97,14 +121,22 @@ model Movement {
 }
 
 model Inventory {
-  id          String  @id @default(uuid())
-  quantity    Int
-  description String?
-  productId   String  @unique
-  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
 
-  unitTypeId String
-  unityType  UnitType @relation(fields: [unitTypeId], references: [id], onDelete: Cascade)
+  quantity Int
+  minStock Int?
+  maxStock Int?
+
+  description String?
+
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  typeProductId String
+  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id], onDelete: Cascade)
+
+  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id])
+  typePresentationId String?
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -112,14 +144,31 @@ model Inventory {
   @@index([productId])
 }
 
-model UnitType {
-  id        String      @id @default(uuid())
-  name      String      @unique
+model TypeProduct {
+  id   String @id @default(uuid())
+  name String @unique
+
   Inventory Inventory[]
   Movement  Movement[]
+  Product   Product[]
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
+}
+
+model TypePresentation {
+  id   String @id @default(uuid())
+  name String @unique
+
+  Inventory Inventory[]
+  Movement  Movement[]
+  Product   Product[]
+}
+
+model MovementType {
+  id       String         @id @default(cuid())
+  name     TypesMovements @unique
+  Movement Movement[]
 }
 
 enum EnumRole {
@@ -127,7 +176,7 @@ enum EnumRole {
   STOREKEEPER
 }
 
-enum MovementType {
+enum TypesMovements {
   INCOME
   OUTPUT
 }
