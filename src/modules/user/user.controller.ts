@@ -20,6 +20,7 @@ import { AuthUserGuard } from '../auth/guards/auth.guard'
   path: 'user',
   version: VERSION_NEUTRAL,
 })
+@UseGuards(AuthUserGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -37,7 +38,6 @@ export class UserController {
   }
 
   @Get('profile')
-  @UseGuards(AuthUserGuard)
   profile(@GetUserPayloadToken() user: User) {
     return this.userService.findOne(user.id)
   }

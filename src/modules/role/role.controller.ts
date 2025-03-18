@@ -1,6 +1,14 @@
-import { Controller, Get, Post, Body, VERSION_NEUTRAL } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  VERSION_NEUTRAL,
+  UseGuards,
+} from '@nestjs/common'
 import { RoleService } from './role.service'
 import { CreateRoleDto } from './dto/create-role.dto'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
 
 @Controller({
   path: 'roles',
@@ -13,7 +21,7 @@ export class RoleController {
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto)
   }
-
+  @UseGuards(AuthUserGuard)
   @Get()
   findAll() {
     return this.roleService.findAll()
