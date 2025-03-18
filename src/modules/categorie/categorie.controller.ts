@@ -6,40 +6,40 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common'
 import { CategorieService } from './categorie.service'
 import { CreateCategorieDto } from './dto/create-categorie.dto'
 import { UpdateCategorieDto } from './dto/update-categorie.dto'
+import { ListCategorieDto } from './dto/list-categorie.dto'
 
 @Controller('categorie')
 export class CategorieController {
   constructor(private readonly categorieService: CategorieService) {}
 
-  @Post()
-  create(@Body() createCategorieDto: CreateCategorieDto) {
-    return this.categorieService.create(createCategorieDto)
+  @Post('create')
+  createOrUpdate(@Body() createCategorieDto: CreateCategorieDto) {
+    return this.categorieService.createOrUpdate(createCategorieDto)
   }
 
-  @Get()
-  findAll() {
-    return this.categorieService.findAll()
+  @Get('list')
+  findAll(@Query() listCategorieDto: ListCategorieDto) {
+    return this.categorieService.findAll(listCategorieDto)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categorieService.findOne(+id)
-  }
-
-  @Patch(':id')
+  @Patch('update/:id')
   update(
     @Param('id') id: string,
     @Body() updateCategorieDto: UpdateCategorieDto,
   ) {
-    return this.categorieService.update(+id, updateCategorieDto)
+    return this.categorieService.createOrUpdate(
+      updateCategorieDto as CreateCategorieDto,
+      id,
+    )
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.categorieService.remove(+id)
+    return this.categorieService.remove(id)
   }
 }

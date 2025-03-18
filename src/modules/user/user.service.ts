@@ -51,6 +51,7 @@ export class UserService {
     return {
       user,
       status: id_user ? HttpStatus.OK : HttpStatus.CREATED,
+      message: id_user ? 'User actualizado' : 'User creado',
     }
   }
 
