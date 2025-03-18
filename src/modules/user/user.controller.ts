@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   Post,
   Query,
@@ -36,11 +37,17 @@ export class UserController {
     return this.userService.findAll()
   }
 
-  @Patch('update')
-  update(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createOrUpdate({
-      ...createUserDto,
-      name: createUserDto.name.toLowerCase(),
-    })
+  @Patch('update/:id_user')
+  update(
+    @Body() createUserDto: CreateUserDto,
+    @Param('id_user') id_user: string,
+  ) {
+    return this.userService.createOrUpdate(
+      {
+        ...createUserDto,
+        name: createUserDto.name.toLowerCase(),
+      },
+      id_user,
+    )
   }
 }

@@ -14,10 +14,10 @@ export class UserService {
   private readonly logger: Logger = new Logger(UserService.name)
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createOrUpdate(createUserDto: CreateUserDto) {
+  async createOrUpdate(createUserDto: CreateUserDto, id_user?: string) {
     const { name, password, id_role } = createUserDto
-    this.logger.debug(createUserDto.name ? 'User actualizando' : 'User creando')
-    await this.verifyUser(name)
+    this.logger.debug(id_user ? 'User actualizando' : 'User creando')
+    await this.verifyUser(name, id_user)
     const passwordHash = await hashPassword(password)
     const user = await this.prismaService.user.upsert({
       create: {
@@ -41,21 +41,30 @@ export class UserService {
       where: {
         name,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
         role: true,
+        password: false,
       },
     })
     return {
       user,
-      status: HttpStatus.CREATED,
+      status: id_user ? HttpStatus.OK : HttpStatus.CREATED,
     }
   }
 
   async findAll() {
     const { count, data } = await this.prismaService.$transaction(
       async (prisma) => ({
-        data: await prisma.user.findMany({ include: { role: true } }),
+        data: await prisma.user.findMany({
+          include: { role: true },
+          omit: { password: true },
+        }),
         count: await prisma.user.count(),
+        orderBy: {
+          createdAt: 'desc',
+        },
       }),
     )
 
@@ -66,9 +75,9 @@ export class UserService {
         count: 0,
       }
     return {
-      data,
       status: HttpStatus.OK,
       count,
+      data,
     }
   }
   async list(listUserDto: ListUserDto) {
@@ -81,6 +90,9 @@ export class UserService {
           include: { role: true },
           orderBy: {
             createdAt: 'desc',
+          },
+          omit: {
+            password: true,
           },
         }),
         count: await prisma.user.count(),
@@ -100,16 +112,15 @@ export class UserService {
     }
   }
 
-  private async verifyUser(name: string) {
+  private async verifyUser(name: string, id_user?: string) {
     const user = await this.prismaService.user.findUnique({
-      where: {
-        name,
-      },
+      where: { name },
     })
-    if (user)
+
+    if (user && user.id !== id_user)
       throw new ConflictException({
         status: HttpStatus.CONFLICT,
-        message: `Usuario existente:${name}`,
+        message: `El nombre  ${name}  ya está en uso.`,
       })
   }
 }
