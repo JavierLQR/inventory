@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { CategorieModule } from './modules/categorie/categorie.module'
 import { PrismaModule } from 'nestjs-prisma'
 import configuration from './config/load-variables'
+
 @Module({
   imports: [
     PrismaModule.forRoot({
