@@ -6,11 +6,15 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { ListUserDto } from './dto/list-user.dto'
+import { GetUserPayloadToken } from 'src/common/decorators/user.decorator'
+import { User } from '../auth/types/user.type'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
 
 @Controller({
   path: 'user',
@@ -30,6 +34,12 @@ export class UserController {
   @Get('list')
   list(@Query() listUserDto: ListUserDto) {
     return this.userService.list(listUserDto)
+  }
+
+  @Get('profile')
+  @UseGuards(AuthUserGuard)
+  profile(@GetUserPayloadToken() user: User) {
+    return this.userService.findOne(user.id)
   }
 
   @Get('list-all')

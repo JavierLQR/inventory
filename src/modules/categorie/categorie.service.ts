@@ -30,7 +30,7 @@ export class CategorieService {
     return {
       data,
       status: id_category ? HttpStatus.OK : HttpStatus.CREATED,
-      message: id_category ? 'Categoria actualizada' : 'Categoria',
+      message: id_category ? 'Categoria actualizada' : 'Categoria creada',
     }
   }
 
@@ -52,7 +52,7 @@ export class CategorieService {
         data: await prisma.category.findMany({
           skip: (page - 1) * size,
           take: size,
-          orderBy: { createdAt: 'desc' },
+          orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
         }),
         count: await prisma.category.count(),
       }),

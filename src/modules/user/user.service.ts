@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
@@ -55,16 +56,22 @@ export class UserService {
     }
   }
 
+  async findOne(user_id: string) {
+    if (!user_id) throw new BadRequestException('User ID no proporcionado')
+    return await this.prismaService.user.findUnique({
+      where: { id: user_id },
+      include: { role: true },
+      omit: { password: true, rolesId: true },
+    })
+  }
+
   async findAll() {
     const { count, data } = await this.prismaService.$transaction(
       async (prisma) => ({
         data: await prisma.user.findMany({
           include: { role: true },
           omit: { password: true, rolesId: true },
-          orderBy: {
-            createdAt: 'desc',
-            updatedAt: 'desc',
-          },
+          orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
         }),
         count: await prisma.user.count(),
       }),
@@ -90,9 +97,7 @@ export class UserService {
           skip: (page - 1) * size,
           take: size,
           include: { role: true },
-          orderBy: {
-            createdAt: 'desc',
-          },
+          orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
           omit: {
             rolesId: true,
             password: true,
