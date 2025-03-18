@@ -59,12 +59,13 @@ export class UserService {
       async (prisma) => ({
         data: await prisma.user.findMany({
           include: { role: true },
-          omit: { password: true },
+          omit: { password: true, rolesId: true },
+          orderBy: {
+            createdAt: 'desc',
+            updatedAt: 'desc',
+          },
         }),
         count: await prisma.user.count(),
-        orderBy: {
-          createdAt: 'desc',
-        },
       }),
     )
 
@@ -92,6 +93,7 @@ export class UserService {
             createdAt: 'desc',
           },
           omit: {
+            rolesId: true,
             password: true,
           },
         }),
