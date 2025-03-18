@@ -15,7 +15,7 @@ import { PrismaModule } from 'nestjs-prisma'
       isGlobal: true,
       envFilePath:
         process.env.NODE_ENV === 'production'
-          ? '.env.production'
+          ? '.env'
           : '.env.development.local',
     }),
     RoleModule,

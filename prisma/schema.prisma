@@ -8,18 +8,29 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role
+  id       String @id @default(uuid())
+  name     String @unique
+  password String
+
+  role    Roles  @relation(fields: [rolesId], references: [id], onDelete: Cascade)
+  rolesId String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([email])
+  @@index([name])
 }
 
-enum Role {
+model Roles {
+  id   String   @id @default(uuid())
+  name EnumRole
+  User User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EnumRole {
   ADMIN
   STOREKEEPER
 }
@@ -43,6 +54,8 @@ model Category {
   name        String  @unique
   description String?
 
+  is_active Boolean @default(true)
+
   products  Product[]
   movements Movement[]
 
@@ -53,13 +66,17 @@ model Category {
 }
 
 model Product {
-  id                String     @id @default(uuid())
-  name              String
-  category          Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId        String
-  movements         Movement[]
-  inventory         Inventory?
-  availableQuantity Int        @default(0)
+  id   String @id @default(uuid())
+  name String
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+
+  movements Movement[]
+  inventory Inventory?
+
+  availableQuantity Int     @default(0)
+  is_active         Boolean @default(true)
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -74,7 +91,7 @@ model Movement {
   date        DateTime     @default(now())
   quantity    Int
   type        MovementType
-  unit        UnitType
+  unit        UnitType     @relation(fields: [unitTypeId], references: [id])
   description String?
 
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -82,8 +99,9 @@ model Movement {
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId  String
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  unitTypeId String
 
   @@index([date])
   @@index([productId])
@@ -91,10 +109,12 @@ model Movement {
 }
 
 model Inventory {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   quantity    Int
-  type        UnitType
   description String?
+
+  unityType  UnitType @relation(fields: [unitTypeId], references: [id], onDelete: Cascade)
+  unitTypeId String
 
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String  @unique
@@ -105,9 +125,11 @@ model Inventory {
   @@index([productId])
 }
 
-enum UnitType {
-  KILOS
-  BAGS
+model UnitType {
+  id        String      @id @default(uuid())
+  name      String      @unique
+  Movement  Movement[]
+  Inventory Inventory[]
 }
 
 enum MovementType {
