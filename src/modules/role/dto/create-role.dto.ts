@@ -8,4 +8,12 @@ export class CreateRoleDto {
   @IsNotEmpty()
   @IsString()
   name: 'ADMIN' | 'STOREKEEPER'
+
+  @IsOptional()
+  @IsString()
+  updatedAt?: string | Date
+
+  @IsOptional()
+  @IsString()
+  createdAt?: string | Date
 }
