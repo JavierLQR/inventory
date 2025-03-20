@@ -16,4 +16,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   id_role: string
+
+  @IsOptional()
+  @IsString()
+  updatedAt?: string | Date
+
+  @IsOptional()
+  @IsString()
+  createdAt?: string | Date
 }
