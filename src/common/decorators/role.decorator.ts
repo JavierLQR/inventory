@@ -7,12 +7,12 @@ export const RolesDefault = (roles: Array<keyof KeyRoles>) =>
 
 export type KeyRoles = {
   ADMIN: 'ADMIN'
-  ALMACENERO: 'STOREKEEPER'
+  ALMACENERO: 'ALMACENERO'
 }
 
 const ROLESDEFAULT: KeyRoles = {
   ADMIN: 'ADMIN',
-  ALMACENERO: 'STOREKEEPER',
+  ALMACENERO: 'ALMACENERO',
 }
 
 export const { ADMIN, ALMACENERO } = ROLESDEFAULT

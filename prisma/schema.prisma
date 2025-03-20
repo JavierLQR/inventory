@@ -138,6 +138,8 @@ model Inventory {
   TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id])
   typePresentationId String?
 
+  entry_date DateTime @default(now())
+
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
@@ -173,10 +175,10 @@ model MovementType {
 
 enum EnumRole {
   ADMIN
-  STOREKEEPER
+  ALMACENERO
 }
 
 enum TypesMovements {
-  INCOME
-  OUTPUT
+  ENTRADA
+  SALIDA
 }

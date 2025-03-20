@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateRoleDto } from './dto/create-role.dto'
 import { PrismaService } from 'nestjs-prisma'
 
@@ -8,11 +8,24 @@ export class RoleService {
 
   async create(createRoleDto: CreateRoleDto) {
     const { name } = createRoleDto
+    this.invalidRole(name)
+    await this.verifyRole(name)
     return await this.prismaService.roles.create({
       data: {
         name,
       },
     })
+  }
+  private async verifyRole(role_name: 'ADMIN' | 'ALMACENERO') {
+    const role = await this.prismaService.roles.findFirst({
+      where: { name: role_name },
+    })
+    if (role) throw new BadRequestException('El rol ya existe')
+  }
+
+  private invalidRole(role_name: 'ADMIN' | 'ALMACENERO') {
+    if (role_name !== 'ADMIN' && role_name !== 'ALMACENERO')
+      throw new BadRequestException(' El rol ${role_valid} no es válido')
   }
 
   async findAll() {
