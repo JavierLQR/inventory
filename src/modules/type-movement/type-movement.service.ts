@@ -1,6 +1,7 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { ConflictException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateTypeMovementDto } from './dto/create-type-movement.dto'
 import { PrismaService } from 'nestjs-prisma'
+import { TypesMovements } from '@prisma/client'
 
 @Injectable()
 export class TypeMovementService {
@@ -10,6 +11,7 @@ export class TypeMovementService {
     id_type_movementy?: string,
   ) {
     const { name } = createTypeMovementDto
+    await this.verifyTypeMovement(name, id_type_movementy)
     const movement = await this.prismaService.movementType.upsert({
       create: { name },
       update: { name },
@@ -24,6 +26,19 @@ export class TypeMovementService {
         ? 'Tipo moviento actualizado'
         : 'Tipo moviento creado',
     }
+  }
+  private async verifyTypeMovement(
+    name: TypesMovements,
+    id_type_movement: string,
+  ) {
+    const movement = await this.prismaService.movementType.findUnique({
+      where: { name },
+    })
+    if (movement && movement.id !== id_type_movement)
+      throw new ConflictException({
+        status: HttpStatus.CONFLICT,
+        message: `El tipo de movimiento (${name})  ya está en uso.`,
+      })
   }
 
   async findAll() {

@@ -12,4 +12,4 @@ export class CreateTypeMovementDto {
   name: TypesMovements
 }
 
-type TypesMovements = 'INCOME' | 'OUTPUT'
+export type TypesMovements = 'SALIDA' | 'ENTRADA'

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { ConflictException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateTypePresentationDto } from './dto/create-type-presentation.dto'
 import { PrismaService } from 'nestjs-prisma'
 
@@ -10,6 +10,7 @@ export class TypePresentationService {
     id_presentation?: string,
   ) {
     const { name } = createTypePresentationDto
+    await this.verifyTypePresentation(name, id_presentation)
     const presentation = await this.prismaService.typePresentation.upsert({
       create: { name },
       update: { name },
@@ -21,6 +22,16 @@ export class TypePresentationService {
       presentation,
       status: id_presentation ? HttpStatus.OK : HttpStatus.CREATED,
     }
+  }
+  private async verifyTypePresentation(name: string, id_presentation: string) {
+    const presentation = await this.prismaService.typePresentation.findUnique({
+      where: { name },
+    })
+    if (presentation && presentation.id !== id_presentation)
+      throw new ConflictException({
+        status: HttpStatus.CONFLICT,
+        message: `El tipo de presentación (${name})  ya está en uso.`,
+      })
   }
 
   async findAll() {

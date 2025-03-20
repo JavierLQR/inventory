@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { ConflictException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateTypeProductDto } from './dto/create-type-product.dto'
 import { PrismaService } from 'nestjs-prisma'
 
@@ -10,6 +10,7 @@ export class TypeProductService {
     id_type_product?: string,
   ) {
     const { name } = createTypeProductDto
+    await this.verifyTypeProduct(name, id_type_product)
     const typeProduct = await this.prismaService.typeProduct.upsert({
       create: { name },
       update: { name },
@@ -28,6 +29,17 @@ export class TypeProductService {
 
   async findAll() {
     return await this.prismaService.typeProduct.findMany()
+  }
+
+  private async verifyTypeProduct(name: string, id_type_product: string) {
+    const typeProduct = await this.prismaService.typeProduct.findUnique({
+      where: { name },
+    })
+    if (typeProduct && typeProduct.id !== id_type_product)
+      throw new ConflictException({
+        status: HttpStatus.CONFLICT,
+        message: `El tipo de producto (${name})  ya está en uso.`,
+      })
   }
 
   async remove(id: string) {
