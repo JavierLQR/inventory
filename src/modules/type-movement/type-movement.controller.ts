@@ -18,7 +18,7 @@ export class TypeMovementController {
   constructor(private readonly typeMovementService: TypeMovementService) {}
 
   @Post()
-  @UseGuards(AuthUserGuard)
+  // @UseGuards(AuthUserGuard)
   create(@Body() createTypeMovementDto: CreateTypeMovementDto) {
     return this.typeMovementService.createOrUpdate(createTypeMovementDto)
   }
