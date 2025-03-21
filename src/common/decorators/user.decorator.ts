@@ -5,7 +5,12 @@ export const GetUserPayloadToken = createParamDecorator(
   (_, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>()
     Logger.debug({
+      message: 'GetToken',
       token: request.cookies.auth,
+    })
+    Logger.debug({
+      message: 'PayloadUser',
+      user: request.user,
     })
     return request.user
   },
