@@ -9,6 +9,7 @@ import { ProviderModule } from './modules/provider/provider.module'
 import { TypeProductModule } from './modules/type-product/type-product.module'
 import { TypePresentationModule } from './modules/type-presentation/type-presentation.module'
 import { TypeMovementModule } from './modules/type-movement/type-movement.module'
+import { ProductModule } from './modules/product/product.module'
 import configuration from './config/load-variables'
 
 @Module({
@@ -32,6 +33,7 @@ import configuration from './config/load-variables'
     TypeProductModule,
     TypePresentationModule,
     TypeMovementModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [],
