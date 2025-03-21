@@ -28,7 +28,7 @@ export class AuthController {
     if (isProduction) {
       this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
       // // PRO
-      return res.cookie('auth', auth, {
+      res.cookie('auth', auth, {
         // si pones en true, una vez actualizada la pagina en el front
         // se pierde las cookies sale undefined
         // sameSite: isProduction ? 'none' : 'lax', // SameSite=None solo para producción
@@ -37,6 +37,11 @@ export class AuthController {
         secure: true, // Secure=true solo en producción (HTTPS)
         httpOnly: true,
       })
+      return res.send({
+        auth,
+        statusCode: HttpStatus.OK,
+        message: 'Autenticación exitosa',
+      })
     }
     this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
     res.cookie('auth', auth, {
@@ -44,7 +49,11 @@ export class AuthController {
       secure: true,
       httpOnly: true,
     })
-    res.send({ auth, statusCode: HttpStatus.OK })
+    res.send({
+      auth,
+      statusCode: HttpStatus.OK,
+      message: 'Autenticación exitosa',
+    })
   }
 
   @UseGuards(AuthUserGuard)
