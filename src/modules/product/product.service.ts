@@ -56,6 +56,11 @@ export class ProductService {
           },
         },
       },
+      omit: {
+        categoryId: true,
+        typePresentationId: true,
+        typeProductId: true,
+      },
     })
     return {
       product,
@@ -89,6 +94,11 @@ export class ProductService {
         skip: (page - 1) * size,
         take: size,
         orderBy: { createdAt: 'desc' },
+        omit: {
+          categoryId: true,
+          typePresentationId: true,
+          typeProductId: true,
+        },
       }),
     ])
     if (!data || !data.length)
