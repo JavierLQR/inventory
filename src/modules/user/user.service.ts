@@ -103,7 +103,14 @@ export class UserService {
         data: await prisma.user.findMany({
           skip: (page - 1) * size,
           take: size,
-          include: { role: true },
+          include: {
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
           orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
           omit: {
             rolesId: true,
