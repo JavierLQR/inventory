@@ -22,7 +22,7 @@ export class ProductService {
     this.logger.debug(
       `${id_product ? 'Updating product' : 'Creating product'} product ${name}`,
     )
-    await this.verifyProduct(createProductDto.id)
+    await this.verifyProduct(name, id_product)
     const product = await this.prismaService.product.upsert({
       create: {
         name,
@@ -40,15 +40,27 @@ export class ProductService {
         id: id_product ?? '',
       },
       include: {
-        category: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            is_active: true,
+            description: true,
+          },
+        },
         TypePresentation: true,
-        typeProduct: true,
+        typeProduct: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     })
     return {
       product,
       status: HttpStatus.OK,
-      message: 'Producto creado',
+      message: id_product ? 'Producto actualizado' : 'Producto creado',
     }
   }
 
@@ -64,8 +76,6 @@ export class ProductService {
               name: true,
               is_active: true,
               description: true,
-              createdAt: true,
-              updatedAt: true,
             },
           },
           TypePresentation: true,
@@ -89,11 +99,13 @@ export class ProductService {
       status: HttpStatus.OK,
     }
   }
-  private async verifyProduct(id: string) {
+  private async verifyProduct(name: string, id_product: string) {
     const product = await this.prismaService.product.findUnique({
-      where: { id },
+      where: {
+        name,
+      },
     })
-    if (product)
+    if (product && product.id !== id_product)
       throw new ConflictException(`Product ${product.name}  already exists`)
   }
 
