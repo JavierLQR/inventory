@@ -69,7 +69,14 @@ export class UserService {
     const { count, data } = await this.prismaService.$transaction(
       async (prisma) => ({
         data: await prisma.user.findMany({
-          include: { role: true },
+          include: {
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
           omit: { password: true, rolesId: true },
           orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
         }),
