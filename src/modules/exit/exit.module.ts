@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { ExitService } from './exit.service';
-import { ExitController } from './exit.controller';
+import { Module } from '@nestjs/common'
+import { ExitService } from './exit.service'
+import { ExitController } from './exit.controller'
 
 @Module({
   controllers: [ExitController],

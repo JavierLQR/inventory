@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateExitDto } from './create-exit.dto';
+import { PartialType } from '@nestjs/mapped-types'
+import { CreateExitDto } from './create-exit.dto'
 
 export class UpdateExitDto extends PartialType(CreateExitDto) {}

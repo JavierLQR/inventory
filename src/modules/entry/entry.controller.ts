@@ -1,7 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EntryService } from './entry.service';
-import { CreateEntryDto } from './dto/create-entry.dto';
-import { UpdateEntryDto } from './dto/update-entry.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common'
+import { EntryService } from './entry.service'
+import { CreateEntryDto } from './dto/create-entry.dto'
+import { UpdateEntryDto } from './dto/update-entry.dto'
 
 @Controller('entry')
 export class EntryController {
@@ -9,26 +17,26 @@ export class EntryController {
 
   @Post()
   create(@Body() createEntryDto: CreateEntryDto) {
-    return this.entryService.create(createEntryDto);
+    return this.entryService.create(createEntryDto)
   }
 
   @Get()
   findAll() {
-    return this.entryService.findAll();
+    return this.entryService.findAll()
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.entryService.findOne(+id);
+    return this.entryService.findOne(+id)
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEntryDto: UpdateEntryDto) {
-    return this.entryService.update(+id, updateEntryDto);
+    return this.entryService.update(+id, updateEntryDto)
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.entryService.remove(+id);
+    return this.entryService.remove(+id)
   }
 }

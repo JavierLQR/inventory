@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTypePresentationDto } from './create-type-presentation.dto';
+import { PartialType } from '@nestjs/mapped-types'
+import { CreateTypePresentationDto } from './create-type-presentation.dto'
 
-export class UpdateTypePresentationDto extends PartialType(CreateTypePresentationDto) {}
+export class UpdateTypePresentationDto extends PartialType(
+  CreateTypePresentationDto,
+) {}
