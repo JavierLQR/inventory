@@ -2,8 +2,8 @@ import { Req } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Request } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { User } from '../types/user.type'
 import { SECRETS } from 'src/common/constant/constant'
+import { User } from '../types/user.type'
 export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
   constructor() {
     super({
@@ -12,11 +12,12 @@ export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       secretOrKey: SECRETS.JWT,
-      ignoreExpiration: true,
+      ignoreExpiration: false,
     })
   }
 
   private static stractJwtRequest(@Req() req: Request): string | null {
+    console.log({ cookies: req.cookies })
     if (req.cookies && req.cookies.auth) return req.cookies.auth
     return null
   }

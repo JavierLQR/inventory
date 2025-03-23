@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer'
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class CreateCategorieDto {
   @IsOptional()
@@ -11,13 +11,12 @@ export class CreateCategorieDto {
   @Transform(({ value }) => value.toLowerCase().trim())
   name: string
 
-  @IsNotEmpty()
-  @IsString()
-  description: string
-
-  @IsNotEmpty()
   @IsString()
   @IsOptional()
+  description: string
+
+  @IsOptional()
+  @IsBoolean()
   is_active: boolean
 
   @IsOptional()

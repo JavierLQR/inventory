@@ -50,6 +50,7 @@ export class TypeProductService {
     })
     return {
       status: HttpStatus.OK,
+      message: 'Tipo producto eliminado',
     }
   }
 }

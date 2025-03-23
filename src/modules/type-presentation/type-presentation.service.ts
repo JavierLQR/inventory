@@ -20,6 +20,9 @@ export class TypePresentationService {
     })
     return {
       presentation,
+      message: id_presentation
+        ? 'Tipo de presentación actualizado'
+        : 'Tipo de presentación creado',
       status: id_presentation ? HttpStatus.OK : HttpStatus.CREATED,
     }
   }
@@ -46,6 +49,7 @@ export class TypePresentationService {
     })
     return {
       status: HttpStatus.OK,
+      message: 'Tipo de presentación eliminado',
     }
   }
 }

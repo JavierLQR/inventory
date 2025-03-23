@@ -21,10 +21,14 @@ export class CategorieService {
       id_category ? 'Category actualizando' : 'Category creando',
     )
     const { name, description, is_active } = createCategorieDto
+    console.log({
+      id_category,
+    })
+
     await this.verifyCategory(name, id_category)
     const data = await this.prismaService.category.upsert({
-      where: { name },
-      update: { description, is_active },
+      where: { id: id_category || '' },
+      update: { description, is_active, name },
       create: { name, description },
     })
     return {
@@ -65,11 +69,10 @@ export class CategorieService {
   }
 
   async remove(id: string) {
-    const data = await this.prismaService.category.delete({
+    await this.prismaService.category.delete({
       where: { id },
     })
     return {
-      data,
       status: HttpStatus.OK,
       message: 'Categoria eliminada',
     }
