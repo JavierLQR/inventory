@@ -18,8 +18,10 @@ export class UserService {
   async createOrUpdate(createUserDto: CreateUserDto, id_user?: string) {
     const { name, password, id_role, lastname, username } = createUserDto
     this.logger.debug(id_user ? 'User actualizando' : 'User creando')
-    await this.verifyUser(name, id_user)
-    const passwordHash = await hashPassword(password)
+    let passwordHash: string = ''
+    await this.verifyUser(username, id_user)
+    if (!id_user) passwordHash = await hashPassword(password)
+
     const user = await this.prismaService.user.upsert({
       create: {
         name,
@@ -34,7 +36,6 @@ export class UserService {
       },
       update: {
         name,
-        password: passwordHash,
         lastname,
         username,
         role: {

@@ -21,7 +21,7 @@ export class CreateUserDto {
   @Transform(({ value }) => value.toLowerCase().trim())
   lastname: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   password: string
 
