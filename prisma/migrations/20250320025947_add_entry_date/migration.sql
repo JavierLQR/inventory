@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Inventory" ADD COLUMN     "entry_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -7,7 +7,9 @@ CREATE TYPE "TypesMovements" AS ENUM ('ENTRADA', 'SALIDA');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "lastname" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "rolesId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -91,13 +93,14 @@ CREATE TABLE "Movement" (
 -- CreateTable
 CREATE TABLE "Inventory" (
     "id" TEXT NOT NULL,
-    "quantity" INTEGER NOT NULL,
+    "quantity" INTEGER,
     "minStock" INTEGER,
     "maxStock" INTEGER,
     "description" TEXT,
     "productId" TEXT NOT NULL,
     "typeProductId" TEXT NOT NULL,
     "typePresentationId" TEXT,
+    "entry_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -131,7 +134,7 @@ CREATE TABLE "MovementType" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE INDEX "User_name_idx" ON "User"("name");
@@ -147,6 +150,9 @@ CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
 -- CreateIndex
 CREATE INDEX "Category_name_idx" ON "Category"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Product_name_key" ON "Product"("name");
 
 -- CreateIndex
 CREATE INDEX "Product_name_idx" ON "Product"("name");
@@ -188,10 +194,10 @@ ALTER TABLE "User" ADD CONSTRAINT "User_rolesId_fkey" FOREIGN KEY ("rolesId") RE
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_typeProductId_fkey" FOREIGN KEY ("typeProductId") REFERENCES "TypeProduct"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_typeProductId_fkey" FOREIGN KEY ("typeProductId") REFERENCES "TypeProduct"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_typePresentationId_fkey" FOREIGN KEY ("typePresentationId") REFERENCES "TypePresentation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_typePresentationId_fkey" FOREIGN KEY ("typePresentationId") REFERENCES "TypePresentation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Movement" ADD CONSTRAINT "Movement_movementTypeId_fkey" FOREIGN KEY ("movementTypeId") REFERENCES "MovementType"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -215,4 +221,4 @@ ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_productId_fkey" FOREIGN KEY ("
 ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_typeProductId_fkey" FOREIGN KEY ("typeProductId") REFERENCES "TypeProduct"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_typePresentationId_fkey" FOREIGN KEY ("typePresentationId") REFERENCES "TypePresentation"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Inventory" ADD CONSTRAINT "Inventory_typePresentationId_fkey" FOREIGN KEY ("typePresentationId") REFERENCES "TypePresentation"("id") ON DELETE CASCADE ON UPDATE CASCADE;

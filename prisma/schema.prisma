@@ -9,7 +9,9 @@ datasource db {
 
 model User {
   id       String @id @default(uuid())
-  name     String @unique
+  username String @unique
+  name     String
+  lastname String
   password String
 
   rolesId String
@@ -73,10 +75,10 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id])
+  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id], onDelete: Cascade)
   typeProductId String
 
-  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id])
+  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id], onDelete: Cascade)
   typePresentationId String?
 
   updatedAt DateTime @updatedAt
@@ -135,7 +137,7 @@ model Inventory {
   typeProductId String
   typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id], onDelete: Cascade)
 
-  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id])
+  TypePresentation   TypePresentation? @relation(fields: [typePresentationId], references: [id], onDelete: Cascade)
   typePresentationId String?
 
   entry_date DateTime @default(now())
