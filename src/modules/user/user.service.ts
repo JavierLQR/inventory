@@ -16,13 +16,15 @@ export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async createOrUpdate(createUserDto: CreateUserDto, id_user?: string) {
-    const { name, password, id_role } = createUserDto
+    const { name, password, id_role, lastname, username } = createUserDto
     this.logger.debug(id_user ? 'User actualizando' : 'User creando')
     await this.verifyUser(name, id_user)
     const passwordHash = await hashPassword(password)
     const user = await this.prismaService.user.upsert({
       create: {
         name,
+        lastname,
+        username,
         password: passwordHash,
         role: {
           connect: {
@@ -33,6 +35,8 @@ export class UserService {
       update: {
         name,
         password: passwordHash,
+        lastname,
+        username,
         role: {
           connect: {
             id: id_role,
@@ -40,7 +44,7 @@ export class UserService {
         },
       },
       where: {
-        name,
+        id: id_user || '',
       },
       select: {
         id: true,
@@ -134,15 +138,23 @@ export class UserService {
     }
   }
 
-  private async verifyUser(name: string, id_user?: string) {
+  private async verifyUser(username: string, id_user?: string) {
     const user = await this.prismaService.user.findUnique({
-      where: { name },
+      where: { username },
     })
 
     if (user && user.id !== id_user)
       throw new ConflictException({
         status: HttpStatus.CONFLICT,
-        message: `El nombre  ${name}  ya está en uso.`,
+        message: `El nombre  ${username}  ya está en uso.`,
       })
+  }
+
+  async remove(id: string) {
+    await this.prismaService.user.delete({ where: { id } })
+    return {
+      status: HttpStatus.OK,
+      message: 'Usuario eliminado',
+    }
   }
 }
