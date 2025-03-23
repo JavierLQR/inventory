@@ -1,3 +1,4 @@
 export const SECRETS = {
-  JWT: process.env.SECRET,
+  JWT: String(process.env.SECRET),
+  EXP: process.env.EXP,
 }

@@ -10,7 +10,8 @@ import { SECRETS } from 'src/common/constant/constant'
       useFactory: () => ({
         secret: SECRETS.JWT,
         signOptions: {
-          expiresIn: '5d',
+          expiresIn: SECRETS.EXP,
+          // expiresIn: '1m',
         },
       }),
     }),

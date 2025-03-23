@@ -13,26 +13,31 @@ export class AuthService {
   ) {}
 
   async signIn(data: CreateAuthDto) {
-    const { name, password } = data
+    const { username, password } = data
     const user = await this.prismaService.user.findUnique({
-      where: { name },
+      where: { username },
       include: { role: true },
     })
     if (!user) throw new BadRequestException('Credenciales incorrectas')
     const isPasswordValid = await verifyPassword(user.password, password)
     if (!isPasswordValid)
       throw new BadRequestException('Credenciales incorrectas')
-    const { id, name: nameToken, role } = user
+    const { id: user_id, name: nameToken, role } = user
     return await this.getToken({
-      id,
+      user_id,
       name: nameToken,
       role,
     })
   }
-
+  private getExpirationToken(token: string) {
+    return this.jwtService.decode<User>(token)
+  }
   private async getToken(user: User) {
-    const payload: User = user
+    const payload = { user_id: user.user_id }
     const accessToken = await this.jwtService.signAsync(payload)
-    return accessToken
+    const decoded = this.getExpirationToken(accessToken)
+    const { exp } = decoded
+
+    return { accessToken, exp }
   }
 }

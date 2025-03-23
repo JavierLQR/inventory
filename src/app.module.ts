@@ -20,10 +20,6 @@ import configuration from './config/load-variables'
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
-      envFilePath:
-        process.env.NODE_ENV === 'production'
-          ? '.env'
-          : '.env.development.local',
     }),
     RoleModule,
     UserModule,

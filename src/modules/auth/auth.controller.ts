@@ -1,16 +1,16 @@
 import {
   Body,
   Controller,
-  Get,
+  Delete,
   HttpStatus,
   Logger,
   Post,
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { Response } from 'express'
 import { AuthService } from './auth.service'
 import { CreateAuthDto } from './dto/create-auth.dto'
-import { Response } from 'express'
 import { AuthUserGuard } from './guards/auth.guard'
 
 @Controller('auth')
@@ -23,52 +23,48 @@ export class AuthController {
     @Body() data: CreateAuthDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const auth = await this.authService.signIn(data)
+    const { accessToken, exp } = await this.authService.signIn(data)
     const isProduction = process.env.NODE_ENV === 'production'
-    if (isProduction) {
-      this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
-      // // PRO
-      res.cookie('auth', auth, {
-        // si pones en true, una vez actualizada la pagina en el front
-        // se pierde las cookies sale undefined
-        // sameSite: isProduction ? 'none' : 'lax', // SameSite=None solo para producción
-        sameSite: 'none', // SameSite=None solo para producción
-        // secure: isProduction, // Secure=true solo en producción (HTTPS)
-        secure: true, // Secure=true solo en producción (HTTPS)
-        httpOnly: true,
-      })
-      return res.send({
-        auth,
-        statusCode: HttpStatus.OK,
-        message: 'Autenticación exitosa',
-      })
-    }
-    this.logger.debug("Autenticando en modo: '" + process.env.NODE_ENV + "'")
-    res.cookie('auth', auth, {
-      sameSite: 'lax',
-      secure: true,
+    this.logger.debug(
+      isProduction
+        ? "Autenticando en modo: '" + process.env.NODE_ENV + "'"
+        : "Autenticando en modo: '" + process.env.NODE_ENV + "'",
+    )
+    res.cookie('auth', accessToken, {
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction,
       httpOnly: true,
     })
+    res.cookie('auth_exp', exp, {
+      sameSite: isProduction ? 'none' : 'lax',
+      secure: isProduction,
+      httpOnly: true,
+    })
+
     res.send({
-      auth,
+      exp,
+      auth: accessToken,
       statusCode: HttpStatus.OK,
       message: 'Autenticación exitosa',
     })
   }
 
   @UseGuards(AuthUserGuard)
-  @Get('logout')
+  @Delete('logout')
   logout(@Res({ passthrough: true }) res: Response) {
     try {
-      res.cookie('auth', '', {
-        sameSite: 'lax',
-        secure: true,
-        httpOnly: true,
-      })
+      const isProduction = process.env.NODE_ENV === 'production'
+      this.logger.debug(
+        isProduction
+          ? "Logout en modo: '" + process.env.NODE_ENV + "'"
+          : "Logout en modo: '" + process.env.NODE_ENV + "'",
+      )
+      res.clearCookie('auth')
+      res.clearCookie('auth_exp')
 
       res.send({
         statusCode: HttpStatus.OK,
-        success: true,
+        message: 'Logout exitoso',
       })
     } catch (error) {
       console.error(error)
