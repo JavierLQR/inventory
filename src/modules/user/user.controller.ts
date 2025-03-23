@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -39,7 +40,7 @@ export class UserController {
 
   @Get('profile')
   profile(@GetUserPayloadToken() user: User) {
-    return this.userService.findOne(user.id)
+    return this.userService.findOne(user.user_id)
   }
 
   @Get('list-all')
@@ -59,5 +60,10 @@ export class UserController {
       },
       id_user,
     )
+  }
+
+  @Delete(':id_user')
+  remove(@Param('id_user') id_user: string) {
+    return this.userService.remove(id_user)
   }
 }
