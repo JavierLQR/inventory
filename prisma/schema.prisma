@@ -13,9 +13,8 @@ model User {
   name     String
   lastname String
   password String
-
-  rolesId String
-  role    Roles  @relation(fields: [rolesId], references: [id], onDelete: Cascade)
+  rolesId  String
+  role     Roles  @relation(fields: [rolesId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -72,6 +71,8 @@ model Product {
 
   movements Movement[]
 
+  description String?
+
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
@@ -97,7 +98,8 @@ model Movement {
   exit    Int?
   balance Int
 
-  type           MovementType @relation(fields: [movementTypeId], references: [id], onDelete: Cascade)
+  // añadir este nombre en vez de type falta pushear 
+  moventType     MovementType @relation(fields: [movementTypeId], references: [id], onDelete: Cascade)
   movementTypeId String
 
   description String?

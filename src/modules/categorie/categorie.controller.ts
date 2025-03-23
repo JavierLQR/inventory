@@ -29,6 +29,10 @@ export class CategorieController {
   findAll(@Query() listCategorieDto: ListCategorieDto) {
     return this.categorieService.findAll(listCategorieDto)
   }
+  @Get('actives')
+  findAllActives() {
+    return this.categorieService.findAllActives()
+  }
 
   @Patch('update/:id')
   update(

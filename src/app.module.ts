@@ -10,6 +10,9 @@ import { TypeProductModule } from './modules/type-product/type-product.module'
 import { TypePresentationModule } from './modules/type-presentation/type-presentation.module'
 import { TypeMovementModule } from './modules/type-movement/type-movement.module'
 import { ProductModule } from './modules/product/product.module'
+import { MovementsModule } from './modules/movements/movements.module';
+import { EntryModule } from './modules/entry/entry.module';
+import { ExitModule } from './modules/exit/exit.module';
 import configuration from './config/load-variables'
 
 @Module({
@@ -30,6 +33,9 @@ import configuration from './config/load-variables'
     TypePresentationModule,
     TypeMovementModule,
     ProductModule,
+    MovementsModule,
+    EntryModule,
+    ExitModule,
   ],
   controllers: [],
   providers: [],

@@ -67,6 +67,23 @@ export class CategorieService {
       data,
     }
   }
+  async findAllActives() {
+    const { count, data } = await this.prismaService.$transaction(
+      async (prisma) => ({
+        data: await prisma.category.findMany({
+          where: {
+            is_active: true,
+          },
+        }),
+        count: await prisma.category.count(),
+      }),
+    )
+    return {
+      status: HttpStatus.OK,
+      count,
+      data,
+    }
+  }
 
   async remove(id: string) {
     await this.prismaService.category.delete({
