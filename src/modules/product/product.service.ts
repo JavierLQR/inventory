@@ -17,8 +17,14 @@ export class ProductService {
     createProductDto: CreateProductDto,
     id_product?: string,
   ) {
-    const { categoryId, name, typePresentationId, typeProductId, is_active } =
-      createProductDto
+    const {
+      categoryId,
+      name,
+      typePresentationId,
+      typeProductId,
+      is_active,
+      description,
+    } = createProductDto
     this.logger.debug(
       `${id_product ? 'Updating product' : 'Creating product'} product ${name}`,
     )
@@ -30,6 +36,7 @@ export class ProductService {
         is_active,
         typePresentationId,
         typeProductId,
+        description,
       },
       update: {
         name,
@@ -37,6 +44,7 @@ export class ProductService {
         typePresentationId,
         is_active,
         typeProductId,
+        description,
       },
       where: {
         id: id_product ?? '',
