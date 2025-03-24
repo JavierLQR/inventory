@@ -24,6 +24,7 @@ export class CreateProductDto {
   typePresentationId: string
 
   @IsOptional()
+  @Transform(({ value }: { value: string }) => Boolean(value))
   @IsBoolean()
   is_active: boolean
 
