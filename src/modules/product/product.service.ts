@@ -103,7 +103,7 @@ export class ProductService {
         },
         skip: (page - 1) * size,
         take: size,
-        orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
+        orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
         omit: {
           categoryId: true,
           typePresentationId: true,
