@@ -95,7 +95,7 @@ export class ProductService {
         },
         skip: (page - 1) * size,
         take: size,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
         omit: {
           categoryId: true,
           typePresentationId: true,
@@ -118,7 +118,7 @@ export class ProductService {
       },
     })
     if (product && product.id !== id_product)
-      throw new ConflictException(`Product ${product.name}  already exists`)
+      throw new ConflictException(`Product '${product.name}' ya existe `)
   }
 
   async remove(id: string) {
