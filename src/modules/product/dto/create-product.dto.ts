@@ -10,7 +10,6 @@ export class CreateProductDto {
   @IsString()
   name: string
 
-  // pushear esto importante para sincronizar la db
   @IsString()
   @IsOptional()
   description: string
@@ -24,7 +23,9 @@ export class CreateProductDto {
   typePresentationId: string
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) => Boolean(value))
+  @Transform(({ value }: { value: string }) =>
+    value === 'true' ? true : false,
+  )
   @IsBoolean()
   is_active: boolean
 
