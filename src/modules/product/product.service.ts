@@ -29,6 +29,7 @@ export class ProductService {
       `${id_product ? 'Updating product' : 'Creating product'} product ${name}`,
     )
     await this.verifyProduct(name, id_product)
+
     const product = await this.prismaService.product.upsert({
       create: {
         name,
