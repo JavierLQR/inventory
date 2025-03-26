@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { MovementsService } from './movements.service'
 import { ListMovemtsDto } from './dto/list-movemt.dto'
 import { CreateMovementDto } from './dto/create-movement.dto'
@@ -15,6 +25,18 @@ export class MovementsController {
   }
   @Post()
   create(@Body() createMovementDto: CreateMovementDto) {
-    return this.movementsService.create(createMovementDto)
+    return this.movementsService.upsertMovement(createMovementDto)
+  }
+  @Patch(':id')
+  update(
+    @Body() createMovementDto: CreateMovementDto,
+    @Param('id') id: string,
+  ) {
+    return this.movementsService.upsertMovement(createMovementDto, id)
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.movementsService.remove(id)
   }
 }
