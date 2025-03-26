@@ -9,7 +9,6 @@ import { ListEntryDto } from './dto/list-entry.dto'
 @UseGuards(AuthUserGuard)
 export class EntryService {
   constructor(private readonly prismaService: PrismaService) {}
-  create(createEntryDto: CreateEntryDto) {}
 
   async findAll(ListEntryDto: ListEntryDto) {
     const { page = 1, size = 25 } = ListEntryDto
@@ -72,6 +71,8 @@ export class EntryService {
       data,
     }
   }
+
+  create(createEntryDto: CreateEntryDto) {}
 
   findOne(id: number) {
     return `This action returns a #${id} entry`
