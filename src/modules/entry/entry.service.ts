@@ -1,15 +1,76 @@
-import { Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable, UseGuards } from '@nestjs/common'
 import { CreateEntryDto } from './dto/create-entry.dto'
 import { UpdateEntryDto } from './dto/update-entry.dto'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
+import { PrismaService } from 'nestjs-prisma'
+import { ListEntryDto } from './dto/list-entry.dto'
 
 @Injectable()
+@UseGuards(AuthUserGuard)
 export class EntryService {
-  create(createEntryDto: CreateEntryDto) {
-    return 'This action adds a new entry'
-  }
+  constructor(private readonly prismaService: PrismaService) {}
+  create(createEntryDto: CreateEntryDto) {}
 
-  findAll() {
-    return `This action returns all entry`
+  async findAll(ListEntryDto: ListEntryDto) {
+    const { page = 1, size = 25 } = ListEntryDto
+
+    const [count, data] = await this.prismaService.$transaction([
+      this.prismaService.movement.count(),
+      this.prismaService.movement.findMany({
+        skip: (page - 1) * size,
+        take: size,
+        orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
+        include: {
+          product: {
+            omit: {
+              categoryId: true,
+              typeProductId: true,
+              typePresentationId: true,
+              updatedAt: true,
+              createdAt: true,
+            },
+          },
+          category: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          moventType: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          TypePresentation: {
+            select: { id: true, name: true },
+          },
+          typeProduct: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        omit: {
+          productId: true,
+          categoryId: true,
+          movementTypeId: true,
+          typePresentationId: true,
+          typeProductId: true,
+        },
+        where: {
+          moventType: {
+            name: 'ENTRADA',
+          },
+        },
+      }),
+    ])
+    return {
+      status: HttpStatus.OK,
+      count,
+      data,
+    }
   }
 
   findOne(id: number) {
