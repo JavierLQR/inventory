@@ -36,7 +36,7 @@ model Company {
   ruc                 String
   corporate_reason    String
   logo                String?
-  businessName        String  @unique
+  businessName        String? @unique
   legalRepresentative String?
   address             String?
   phone               String?
