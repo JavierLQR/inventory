@@ -15,7 +15,7 @@ export class ProviderService {
       businessName,
       corporate_reason,
       legalRepresentative,
-      ruc,
+      numberRuc,
       phone,
     } = createProviderDto
     this.logger.debug(
@@ -28,7 +28,7 @@ export class ProviderService {
       create: {
         businessName,
         corporate_reason,
-        ruc,
+        ruc: numberRuc,
         phone,
         address,
         legalRepresentative,
@@ -39,7 +39,7 @@ export class ProviderService {
         corporate_reason,
         legalRepresentative,
         phone,
-        ruc,
+        ruc: numberRuc,
       },
     })
 
