@@ -10,69 +10,86 @@ export class MovementsService {
 
   async findAll(listMovemtsDto: ListMovemtsDto) {
     const { page = 1, size = 25 } = listMovemtsDto
-    const [count, data, _totalBalance] = await this.prismaService.$transaction([
-      this.prismaService.movement.count(),
-      this.prismaService.movement.findMany({
-        skip: (page - 1) * size,
-        take: size,
-        orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
-        include: {
-          product: {
-            omit: {
-              categoryId: true,
-              typeProductId: true,
-              typePresentationId: true,
-              updatedAt: true,
-              createdAt: true,
+    const [count, data, _totalBalance, totalEntries, totalExits] =
+      await this.prismaService.$transaction([
+        this.prismaService.movement.count(),
+        this.prismaService.movement.findMany({
+          skip: (page - 1) * size,
+          take: size,
+          orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
+          include: {
+            product: {
+              omit: {
+                categoryId: true,
+                typeProductId: true,
+                typePresentationId: true,
+                updatedAt: true,
+                createdAt: true,
+              },
+            },
+            category: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
+            moventType: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
+            TypePresentation: {
+              select: { id: true, name: true },
+            },
+            typeProduct: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
           },
-          category: {
-            select: {
-              name: true,
-              id: true,
-            },
+          omit: {
+            productId: true,
+            categoryId: true,
+            movementTypeId: true,
+            typePresentationId: true,
+            typeProductId: true,
           },
-          moventType: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
-          TypePresentation: {
-            select: { id: true, name: true },
-          },
-          typeProduct: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-        omit: {
-          productId: true,
-          categoryId: true,
-          movementTypeId: true,
-          typePresentationId: true,
-          typeProductId: true,
-        },
-      }),
-      this.prismaService.movement.aggregate({
-        _sum: {
-          balance: true,
-        },
-      }),
-    ])
+        }),
+        this.prismaService.movement.aggregate({
+          _sum: { balance: true },
+        }),
+        this.prismaService.movement.aggregate({
+          _sum: { entry: true },
+        }),
+        this.prismaService.movement.aggregate({
+          _sum: { exit: true },
+        }),
+      ])
     if (!data || data.length === 0)
       return {
         status: HttpStatus.OK,
         count: 0,
         total_balance: 0,
+        total_entry: 0,
+        total_exit: 0,
+        remaining_balance: 0,
         data,
       }
+
+    const total_balance = _totalBalance._sum.balance || 0
+    const total_entry = totalEntries._sum.entry || 0
+    const total_exit = totalExits._sum.exit || 0
+    const remaining_balance = total_entry - total_exit
+
     return {
       status: HttpStatus.OK,
+      total_balance,
+      remaining_balance,
+      total_entry,
+      total_exit,
       count,
-      total_balance: _totalBalance._sum.balance,
       data,
     }
   }
@@ -112,10 +129,18 @@ export class MovementsService {
       where: { productId },
       orderBy: { date: 'desc' },
     })
-
     const lastBalance = lastMovement ? lastMovement.balance : 0
-    const newBalance = lastBalance + (entry || 0) - (exit || 0)
-    this.logger.debug(productId)
+    const existingMovement = productMovementId
+      ? await this.prismaService.movement.findUnique({
+          where: { id: productMovementId },
+        })
+      : null
+
+    const newBalance = existingMovement
+      ? existingMovement.balance
+      : lastBalance + (entry || 0) - (exit || 0)
+
+    this.logger.debug(productMovementId ? 'Update Movement' : 'Create Movement')
     if (newBalance < 0) {
       throw new HttpException(
         'No se puede registrar una salida mayor al stock disponible del producto.',
@@ -128,7 +153,7 @@ export class MovementsService {
         : `Created MovementProduct `,
     )
     const movement = await this.prismaService.movement.upsert({
-      where: { id: productMovementId }, // Aquí puedes usar un identificador único si lo tienes
+      where: { id: productMovementId || '' },
       update: {
         date: date || new Date(),
         entry,
@@ -153,11 +178,50 @@ export class MovementsService {
         typeProduct: { connect: { id: typeProductId } },
         TypePresentation: { connect: { id: typePresentationId } },
       },
+      include: {
+        product: {
+          omit: {
+            categoryId: true,
+            typeProductId: true,
+            typePresentationId: true,
+            updatedAt: true,
+            createdAt: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        moventType: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        TypePresentation: {
+          select: { id: true, name: true },
+        },
+        typeProduct: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      omit: {
+        movementTypeId: true,
+        categoryId: true,
+        productId: true,
+        typeProductId: true,
+        typePresentationId: true,
+      },
     })
 
     return {
       status: HttpStatus.OK,
-      message: `${movementTypeId ? 'Movimiento actualizado' : 'Movimiento Creado'} exitosamente`,
+      message: `${productMovementId ? 'Movimiento actualizado' : 'Movimiento Creado'} exitosamente`,
       data: movement,
     }
   }
