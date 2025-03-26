@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common'
 import { EntryService } from './entry.service'
 import { CreateEntryDto } from './dto/create-entry.dto'
 import { UpdateEntryDto } from './dto/update-entry.dto'
+import { ListEntryDto } from './dto/list-entry.dto'
 
 @Controller('entry')
 export class EntryController {
@@ -21,8 +23,8 @@ export class EntryController {
   }
 
   @Get()
-  findAll() {
-    return this.entryService.findAll()
+  findAll(@Query() data: ListEntryDto) {
+    return this.entryService.findAll(data)
   }
 
   @Get(':id')
