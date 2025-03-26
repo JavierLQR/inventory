@@ -8,13 +8,16 @@ import {
   Delete,
   Query,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common'
 import { ProductService } from './product.service'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 import { ListProductDto } from './dto/list-product.dto'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
 
 @Controller('product')
+@UseGuards(AuthUserGuard)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
