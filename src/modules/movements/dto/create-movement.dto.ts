@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Min,
 } from 'class-validator'
 
 export class CreateMovementDto {
@@ -13,10 +14,16 @@ export class CreateMovementDto {
 
   @IsOptional()
   @IsInt()
+  @Min(1, {
+    message: 'La entrada debe ser mayor a 0',
+  })
   entry?: number
 
   @IsOptional()
   @IsInt()
+  @Min(1, {
+    message: 'La salida debe ser mayor a 0',
+  })
   exit?: number
 
   @IsOptional()
