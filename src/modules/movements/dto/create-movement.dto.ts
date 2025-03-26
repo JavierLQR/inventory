@@ -1,4 +1,10 @@
-import { IsDate, IsInt, IsOptional, IsString } from 'class-validator'
+import {
+  IsDate,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 export class CreateMovementDto {
   @IsOptional()
@@ -22,17 +28,22 @@ export class CreateMovementDto {
   description?: string
 
   @IsString()
+  @IsNotEmpty()
   productId: string
 
   @IsString()
+  @IsNotEmpty()
   movementTypeId: string
 
   @IsString()
+  @IsNotEmpty()
   typePresentationId: string
 
+  @IsNotEmpty()
   @IsString()
   categoryId: string
 
+  @IsNotEmpty()
   @IsString()
   typeProductId: string
 }
