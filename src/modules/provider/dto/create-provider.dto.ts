@@ -11,7 +11,8 @@ export class CreateProviderDto {
 
   @IsString()
   @IsNotEmpty()
-  ruc: string
+  @Transform(({ value }) => String(value))
+  numberRuc: string
 
   @IsOptional()
   @IsString()
