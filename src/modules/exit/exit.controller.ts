@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import { ExitService } from './exit.service'
 import { CreateExitDto } from './dto/create-exit.dto'
 import { UpdateExitDto } from './dto/update-exit.dto'
 import { ListExitDto } from './dto/list.exit.dto'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
 
 @Controller('exit')
+@UseGuards(AuthUserGuard)
 export class ExitController {
   constructor(private readonly exitService: ExitService) {}
 
