@@ -98,7 +98,6 @@ model Movement {
   exit    Int?
   balance Int
 
-  // añadir este nombre en vez de type falta pushear 
   moventType     MovementType @relation(fields: [movementTypeId], references: [id], onDelete: Cascade)
   movementTypeId String
 
