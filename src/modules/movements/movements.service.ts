@@ -130,15 +130,7 @@ export class MovementsService {
       orderBy: { date: 'desc' },
     })
     const lastBalance = lastMovement ? lastMovement.balance : 0
-    const existingMovement = productMovementId
-      ? await this.prismaService.movement.findUnique({
-          where: { id: productMovementId },
-        })
-      : null
-
-    const newBalance = existingMovement
-      ? existingMovement.balance
-      : lastBalance + (entry || 0) - (exit || 0)
+    const newBalance = lastBalance + (entry || 0) - (exit || 0)
 
     this.logger.debug(productMovementId ? 'Update Movement' : 'Create Movement')
     if (newBalance < 0) {
