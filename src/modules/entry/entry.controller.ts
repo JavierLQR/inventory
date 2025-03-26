@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import { EntryService } from './entry.service'
 import { CreateEntryDto } from './dto/create-entry.dto'
 import { UpdateEntryDto } from './dto/update-entry.dto'
 import { ListEntryDto } from './dto/list-entry.dto'
+import { AuthUserGuard } from '../auth/guards/auth.guard'
 
 @Controller('entry')
+@UseGuards(AuthUserGuard)
 export class EntryController {
   constructor(private readonly entryService: EntryService) {}
 
