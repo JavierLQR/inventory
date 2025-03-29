@@ -16,6 +16,11 @@ export class MovementsService {
         this.prismaService.movement.findMany({
           skip: (page - 1) * size,
           take: size,
+          where: {
+            product: {
+              is_active: true,
+            },
+          },
           orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
           include: {
             product: {
