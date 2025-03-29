@@ -1,4 +1,4 @@
-import { Req } from '@nestjs/common'
+import { Logger, Req } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Request } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
@@ -12,12 +12,12 @@ export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       secretOrKey: SECRETS.JWT,
-      ignoreExpiration: false,
+      ignoreExpiration: true,
     })
   }
 
   private static stractJwtRequest(@Req() req: Request): string | null {
-    console.log({ cookies: req.cookies })
+    Logger.debug({ cookies: req.cookies })
     if (req.cookies && req.cookies.auth) return req.cookies.auth
     return null
   }
