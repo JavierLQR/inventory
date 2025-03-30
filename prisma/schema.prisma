@@ -56,8 +56,8 @@ model Category {
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
-  movements Movement[]
-  products  Product[]
+  // movements Movement[]
+  products Product[]
 
   @@index([name])
 }
@@ -103,17 +103,8 @@ model Movement {
 
   description String?
 
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  typeProductId String
-  typeProduct   TypeProduct @relation(fields: [typeProductId], references: [id], onDelete: Cascade)
-
-  TypePresentation   TypePresentation @relation(fields: [typePresentationId], references: [id], onDelete: Cascade)
-  typePresentationId String
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -154,7 +145,7 @@ model TypeProduct {
   name String @unique
 
   Inventory Inventory[]
-  Movement  Movement[]
+  // Movement  Movement[]
   Product   Product[]
 
   updatedAt DateTime @updatedAt
@@ -166,7 +157,7 @@ model TypePresentation {
   name String @unique
 
   Inventory Inventory[]
-  Movement  Movement[]
+  // Movement  Movement[]
   Product   Product[]
 }
 
