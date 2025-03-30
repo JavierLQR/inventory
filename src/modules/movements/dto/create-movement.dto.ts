@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import {
   IsDate,
   IsInt,
@@ -17,6 +18,7 @@ export class CreateMovementDto {
   @Min(1, {
     message: 'La entrada debe ser mayor a 0',
   })
+  @Transform(({ value }) => parseInt(value))
   entry?: number
 
   @IsOptional()
@@ -24,10 +26,12 @@ export class CreateMovementDto {
   @Min(1, {
     message: 'La salida debe ser mayor a 0',
   })
+  @Transform(({ value }) => parseInt(value))
   exit?: number
 
   @IsOptional()
   @IsInt()
+  @Transform(({ value }) => parseInt(value))
   balance: number
 
   @IsOptional()

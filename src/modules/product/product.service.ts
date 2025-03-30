@@ -120,6 +120,76 @@ export class ProductService {
       status: HttpStatus.OK,
     }
   }
+  async findAllActives() {
+    const [count, data] = await this.prismaService.$transaction([
+      this.prismaService.product.count(),
+      this.prismaService.product.findMany({
+        where: {
+          is_active: true,
+        },
+        select: {
+          id: true,
+          name: true,
+          category: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          movements: {
+            select: {
+              balance: true,
+            },
+            orderBy: { date: 'desc' },
+          },
+          TypePresentation: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          typeProduct: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ])
+    if (!data || !data.length)
+      return { data: [], count: 0, status: HttpStatus.OK }
+    return {
+      data,
+      count,
+      status: HttpStatus.OK,
+    }
+  }
+  async findOneProduct(id: string) {
+    return await this.prismaService.product.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            is_active: true,
+            description: true,
+          },
+        },
+        TypePresentation: true,
+        typeProduct: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    })
+  }
   private async verifyProduct(name: string, id_product: string) {
     const product = await this.prismaService.product.findUnique({
       where: {

@@ -24,6 +24,11 @@ export class MovementsService {
           orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
           include: {
             product: {
+              include: {
+                category: true,
+                TypePresentation: true,
+                typeProduct: true,
+              },
               omit: {
                 categoryId: true,
                 typeProductId: true,
@@ -32,34 +37,16 @@ export class MovementsService {
                 createdAt: true,
               },
             },
-            category: {
-              select: {
-                name: true,
-                id: true,
-              },
-            },
             moventType: {
               select: {
                 name: true,
                 id: true,
               },
             },
-            TypePresentation: {
-              select: { id: true, name: true },
-            },
-            typeProduct: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
           },
           omit: {
             productId: true,
-            categoryId: true,
             movementTypeId: true,
-            typePresentationId: true,
-            typeProductId: true,
           },
         }),
         this.prismaService.movement.aggregate({
@@ -118,17 +105,8 @@ export class MovementsService {
     createMovementDto: CreateMovementDto,
     productMovementId?: string,
   ) {
-    const {
-      date,
-      entry,
-      exit,
-      movementTypeId,
-      description,
-      categoryId,
-      productId,
-      typeProductId,
-      typePresentationId,
-    } = createMovementDto
+    const { date, entry, exit, movementTypeId, description, productId } =
+      createMovementDto
 
     const lastMovement = await this.prismaService.movement.findFirst({
       where: { productId },
@@ -158,10 +136,7 @@ export class MovementsService {
         balance: newBalance,
         moventType: { connect: { id: movementTypeId } },
         description,
-        category: { connect: { id: categoryId } },
         product: { connect: { id: productId } },
-        typeProduct: { connect: { id: typeProductId } },
-        TypePresentation: { connect: { id: typePresentationId } },
       },
       create: {
         date: date || new Date(),
@@ -170,49 +145,18 @@ export class MovementsService {
         balance: newBalance,
         moventType: { connect: { id: movementTypeId } },
         description,
-        category: { connect: { id: categoryId } },
         product: { connect: { id: productId } },
-        typeProduct: { connect: { id: typeProductId } },
-        TypePresentation: { connect: { id: typePresentationId } },
       },
       include: {
-        product: {
-          omit: {
-            categoryId: true,
-            typeProductId: true,
-            typePresentationId: true,
-            updatedAt: true,
-            createdAt: true,
-          },
-        },
-        category: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
         moventType: {
           select: {
             name: true,
             id: true,
           },
         },
-        TypePresentation: {
-          select: { id: true, name: true },
-        },
-        typeProduct: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
       },
       omit: {
         movementTypeId: true,
-        categoryId: true,
-        productId: true,
-        typeProductId: true,
-        typePresentationId: true,
       },
     })
 

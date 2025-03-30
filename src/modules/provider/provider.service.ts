@@ -61,7 +61,7 @@ export class ProviderService {
     }
   }
   async find() {
-    const proveedor = await this.prismaService.company.findFirst()
+    const proveedor = await this.prismaService.company.findMany()
     return {
       proveedor,
       status: HttpStatus.OK,

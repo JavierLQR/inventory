@@ -30,6 +30,15 @@ export class ProductController {
   findAll(@Query() listProductDto: ListProductDto) {
     return this.productService.findAll(listProductDto)
   }
+  @Get('actives/:id')
+  findOneProduct(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productService.findOneProduct(id)
+  }
+
+  @Get('actives')
+  findAllActives() {
+    return this.productService.findAllActives()
+  }
 
   @Patch(':id')
   update(
