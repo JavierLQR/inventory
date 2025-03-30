@@ -94,6 +94,12 @@ export class ProductService {
               description: true,
             },
           },
+          movements: {
+            select: {
+              balance: true,
+            },
+            orderBy: { date: 'desc' },
+          },
           TypePresentation: true,
           typeProduct: {
             select: {
