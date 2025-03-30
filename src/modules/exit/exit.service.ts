@@ -1,6 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { CreateExitDto } from './dto/create-exit.dto'
-import { UpdateExitDto } from './dto/update-exit.dto'
 import { PrismaService } from 'nestjs-prisma'
 import { ListExitDto } from './dto/list.exit.dto'
 
@@ -27,34 +25,16 @@ export class ExitService {
               createdAt: true,
             },
           },
-          category: {
-            select: {
-              name: true,
-              id: true,
-            },
-          },
           moventType: {
             select: {
               name: true,
               id: true,
             },
           },
-          TypePresentation: {
-            select: { id: true, name: true },
-          },
-          typeProduct: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
         },
         omit: {
           productId: true,
-          categoryId: true,
           movementTypeId: true,
-          typePresentationId: true,
-          typeProductId: true,
         },
         where: {
           moventType: {
@@ -74,21 +54,5 @@ export class ExitService {
       count,
       data,
     }
-  }
-
-  create(createExitDto: CreateExitDto) {
-    return 'This action adds a new exit'
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} exit`
-  }
-
-  update(id: number, updateExitDto: UpdateExitDto) {
-    return `This action updates a #${id} exit`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} exit`
   }
 }

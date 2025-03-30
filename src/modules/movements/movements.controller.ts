@@ -24,10 +24,6 @@ export class MovementsController {
     return this.movementsService.findAll(listMovemtsDto)
   }
 
-  // @Get('/actives')
-  // findAllActives() {
-  //   return this.movementsService.findAllActives()
-  // }
   @Post()
   create(@Body() createMovementDto: CreateMovementDto) {
     return this.movementsService.upsertMovement(createMovementDto)
