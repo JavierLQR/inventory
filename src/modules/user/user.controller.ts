@@ -21,7 +21,6 @@ import { AuthUserGuard } from '../auth/guards/auth.guard'
   path: 'user',
   version: VERSION_NEUTRAL,
 })
-@UseGuards(AuthUserGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -33,21 +32,25 @@ export class UserController {
     })
   }
 
+  @UseGuards(AuthUserGuard)
   @Get('list')
   list(@Query() listUserDto: ListUserDto) {
     return this.userService.list(listUserDto)
   }
 
+  @UseGuards(AuthUserGuard)
   @Get('profile')
   profile(@GetUserPayloadToken() user: User) {
     return this.userService.findOne(user.user_id)
   }
 
+  @UseGuards(AuthUserGuard)
   @Get('list-all')
   findAll() {
     return this.userService.findAll()
   }
 
+  @UseGuards(AuthUserGuard)
   @Patch('update/:id_user')
   update(
     @Body() createUserDto: CreateUserDto,
@@ -62,6 +65,7 @@ export class UserController {
     )
   }
 
+  @UseGuards(AuthUserGuard)
   @Delete(':id_user')
   remove(@Param('id_user') id_user: string) {
     return this.userService.remove(id_user)
