@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
-    "start:prod": "NODE_ENV=production node dist/main",
+    "start:prod": "cross-env NODE_ENV=production node dist/main",
     "migration": "npx prisma migrate dev --name init",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
