@@ -19,9 +19,9 @@ export const InitialApp = async (app: INestApplication<any>) => {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   })
   Logger.debug('Enable cors Initialized !!!')
-  app.setGlobalPrefix('api-v1')
 
   const PORT = Number(process.env.PORT) ?? 4000
+  app.setGlobalPrefix('api-v1')
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
