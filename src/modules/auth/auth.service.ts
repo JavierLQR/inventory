@@ -14,8 +14,13 @@ export class AuthService {
 
   async signIn(data: CreateAuthDto) {
     const { username, password } = data
-    const user = await this.prismaService.user.findUnique({
-      where: { username },
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        username: {
+          equals: username,
+          mode: 'insensitive',
+        },
+      },
       include: { role: true },
     })
     if (!user) throw new BadRequestException('Credenciales incorrectas')
