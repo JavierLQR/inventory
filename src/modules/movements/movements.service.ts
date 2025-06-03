@@ -9,17 +9,47 @@ export class MovementsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(listMovemtsDto: ListMovemtsDto) {
-    const { page = 1, size = 25 } = listMovemtsDto
+    const { page = 1, size = 25, search, endDate, startDate } = listMovemtsDto
     const [count, data, _totalBalance, totalEntries, totalExits] =
       await this.prismaService.$transaction([
-        this.prismaService.movement.count(),
+        this.prismaService.movement.count({
+          where: {
+            product: {
+              is_active: true,
+              ...(search && {
+                name: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              }),
+            },
+            ...((startDate || endDate) && {
+              createdAt: {
+                ...(startDate && { gte: new Date(startDate) }),
+                ...(endDate && { lte: new Date(endDate) }),
+              },
+            }),
+          },
+        }),
         this.prismaService.movement.findMany({
           skip: (page - 1) * size,
           take: size,
           where: {
             product: {
               is_active: true,
+              ...(search && {
+                name: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              }),
             },
+            ...((startDate || endDate) && {
+              createdAt: {
+                ...(startDate && { gte: new Date(startDate) }),
+                ...(endDate && { lte: new Date(endDate) }),
+              },
+            }),
           },
           orderBy: [{ createdAt: 'desc' }, { updatedAt: 'desc' }],
           include: {
@@ -85,6 +115,7 @@ export class MovementsService {
       data,
     }
   }
+
   async getMovementsByDateRange(startDate: Date, endDate: Date) {
     return this.prismaService.movement.findMany({
       where: {
